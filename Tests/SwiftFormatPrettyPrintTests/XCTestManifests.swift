@@ -253,8 +253,11 @@ extension FunctionDeclTests {
         ("testBasicFunctionDeclarations_packArguments", testBasicFunctionDeclarations_packArguments),
         ("testBodilessFunctionDecl", testBodilessFunctionDecl),
         ("testBreaksBeforeOrInsideOutput", testBreaksBeforeOrInsideOutput),
+        ("testBreaksBeforeOrInsideOutput_prioritizingKeepingOutputTogether", testBreaksBeforeOrInsideOutput_prioritizingKeepingOutputTogether),
         ("testBreaksBeforeOrInsideOutputWithAttributes", testBreaksBeforeOrInsideOutputWithAttributes),
+        ("testBreaksBeforeOrInsideOutputWithAttributes_prioritizingKeepingOutputTogether", testBreaksBeforeOrInsideOutputWithAttributes_prioritizingKeepingOutputTogether),
         ("testBreaksBeforeOrInsideOutputWithWhereClause", testBreaksBeforeOrInsideOutputWithWhereClause),
+        ("testBreaksBeforeOrInsideOutputWithWhereClause_prioritizingKeepingOutputTogether", testBreaksBeforeOrInsideOutputWithWhereClause_prioritizingKeepingOutputTogether),
         ("testDoesNotCollapseFunctionParameterAttributes", testDoesNotCollapseFunctionParameterAttributes),
         ("testDoesNotCollapseStackedFunctionParameterAttributes", testDoesNotCollapseStackedFunctionParameterAttributes),
         ("testEmptyFunction", testEmptyFunction),
@@ -523,6 +526,8 @@ extension SubscriptDeclTests {
     // to regenerate.
     static let __allTests__SubscriptDeclTests = [
         ("testBasicSubscriptDeclarations", testBasicSubscriptDeclarations),
+        ("testBreaksBeforeOrInsideOutput", testBreaksBeforeOrInsideOutput),
+        ("testBreaksBeforeOrInsideOutput_prioritizingKeepingOutputTogether", testBreaksBeforeOrInsideOutput_prioritizingKeepingOutputTogether),
         ("testEmptySubscript", testEmptySubscript),
         ("testSubscriptAttributes", testSubscriptAttributes),
         ("testSubscriptFullWrap", testSubscriptFullWrap),

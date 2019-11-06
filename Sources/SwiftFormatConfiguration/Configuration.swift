@@ -31,6 +31,7 @@ public class Configuration: Codable {
     case lineBreakBeforeControlFlowKeywords
     case lineBreakBeforeEachArgument
     case lineBreakAfterGenericWhereClause
+    case prioritizeKeepingFunctionOutputTogether
     case indentConditionalCompilationBlocks
     case rules
   }
@@ -101,6 +102,16 @@ public class Configuration: Codable {
   /// break will be added before the first requirement and anytime the line length would be exceeded.
   public var lineBreakAfterGenericWhereClause = false
 
+  /// Determines if function-like declaration outputs should be prioritized to be together with the
+  /// function signature right (closing) parenthesis.
+  ///
+  /// If false (the default), function output (i.e. throws, return type) is not prioritized to be
+  /// together with the signature's right parenthesis, and when the line length would be exceeded,
+  /// a line break will be fired after the function signature first, indenting the declaration output
+  /// one additional level. If true, A line break will be fired further up in the function's
+  /// declaration (e.g. generic parameters, parameters) before breaking on the function's output.
+  public var prioritizeKeepingFunctionOutputTogether = false
+
   /// Determines the indentation behavior for `#if`, `#elseif`, and `#else`.
   public var indentConditionalCompilationBlocks = true
 
@@ -145,12 +156,13 @@ public class Configuration: Codable {
       BlankLineAfterFunctionDeclarationConfiguration.self, forKey: .blankLineAfterFunctionDeclarations)
       ?? BlankLineAfterFunctionDeclarationConfiguration()
     self.lineBreakBeforeControlFlowKeywords
-      = try container.decodeIfPresent(Bool.self, forKey: .lineBreakBeforeControlFlowKeywords)
-      ?? true
+      = try container.decodeIfPresent(Bool.self, forKey: .lineBreakBeforeControlFlowKeywords) ?? false
     self.lineBreakBeforeEachArgument
-      = try container.decodeIfPresent(Bool.self, forKey: .lineBreakBeforeEachArgument) ?? true
+      = try container.decodeIfPresent(Bool.self, forKey: .lineBreakBeforeEachArgument) ?? false
     self.lineBreakAfterGenericWhereClause
       = try container.decodeIfPresent(Bool.self, forKey: .lineBreakAfterGenericWhereClause) ?? false
+    self.prioritizeKeepingFunctionOutputTogether
+      = try container.decodeIfPresent(Bool.self, forKey: .prioritizeKeepingFunctionOutputTogether) ?? false
     self.indentConditionalCompilationBlocks
       = try container.decodeIfPresent(Bool.self, forKey: .indentConditionalCompilationBlocks) ?? true
     self.rules = try container.decodeIfPresent([String: Bool].self, forKey: .rules) ?? [:]
@@ -167,10 +179,10 @@ public class Configuration: Codable {
     try container.encode(respectsExistingLineBreaks, forKey: .respectsExistingLineBreaks)
     try container.encode(blankLineBetweenMembers, forKey: .blankLineBetweenMembers)
     try container.encode(blankLineAfterFunctionDeclarations, forKey: .blankLineAfterFunctionDeclarations)
-    try container.encode(
-      lineBreakBeforeControlFlowKeywords, forKey: .lineBreakBeforeControlFlowKeywords)
+    try container.encode(lineBreakBeforeControlFlowKeywords, forKey: .lineBreakBeforeControlFlowKeywords)
     try container.encode(lineBreakBeforeEachArgument, forKey: .lineBreakBeforeEachArgument)
     try container.encode(lineBreakAfterGenericWhereClause, forKey: .lineBreakAfterGenericWhereClause)
+    try container.encode(prioritizeKeepingFunctionOutputTogether, forKey: .prioritizeKeepingFunctionOutputTogether)
     try container.encode(indentConditionalCompilationBlocks, forKey: .indentConditionalCompilationBlocks)
     try container.encode(rules, forKey: .rules)
   }

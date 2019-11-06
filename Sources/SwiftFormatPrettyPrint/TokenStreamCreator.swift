@@ -57,14 +57,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
   /// token stream.
   func before(_ token: TokenSyntax?, tokens: [Token]) {
     guard let tok = token else { return }
-    for preToken in tokens {
-      if case .open = preToken {
-        openings += 1
-      } else if case .close = preToken {
-        assert(openings > 0)
-        openings -= 1
-      }
-    }
     beforeMap[tok, default: []] += tokens
   }
 
@@ -78,14 +70,6 @@ private final class TokenStreamCreator: SyntaxVisitor {
   /// token stream.
   func after(_ token: TokenSyntax?, tokens: [Token]) {
     guard let tok = token else { return }
-    for postToken in tokens {
-      if case .open = postToken {
-        openings += 1
-      } else if case .close = postToken {
-        assert(openings > 0)
-        openings -= 1
-      }
-    }
     afterMap[tok, default: []].append(tokens)
   }
 
@@ -258,6 +242,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
     after(node.funcKeyword, tokens: .break)
     after(node.identifier, tokens: .close)
 
+    // prioritize keeping ") throws -> <return_type>" together.
+    if config.prioritizeKeepingFunctionOutputTogether {
+      after(node.signature.lastToken, tokens: .close)
+    }
+
     if case .spacedBinaryOperator = node.identifier.tokenKind {
       after(node.identifier.lastToken, tokens: .space)
     }
@@ -310,6 +299,11 @@ private final class TokenStreamCreator: SyntaxVisitor {
     if let firstModifierToken = node.modifiers?.firstToken {
       before(firstModifierToken, tokens: .open)
       after(node.subscriptKeyword, tokens: .close)
+    }
+
+    // prioritize keeping ") -> <return_type>" together.
+    if config.prioritizeKeepingFunctionOutputTogether {
+      after(node.result.lastToken, tokens: .close)
     }
 
     arrangeAttributeList(node.attributes)
@@ -803,6 +797,12 @@ private final class TokenStreamCreator: SyntaxVisitor {
   func visit(_ node: ParameterClauseSyntax) -> SyntaxVisitorContinueKind {
     after(node.leftParen, tokens: .break(.open, size: 0), .open(argumentListConsistency()))
     before(node.rightParen, tokens: .break(.close, size: 0), .close)
+
+    // prioritize keeping ") throws -> <return_type>" together.
+    if config.prioritizeKeepingFunctionOutputTogether {
+      before(node.rightParen, tokens: .open)
+    }
+
     return .visitChildren
   }
 

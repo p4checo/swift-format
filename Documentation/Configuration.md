@@ -67,6 +67,16 @@ top-level keys and values:
     added before the first requirement and anytime the line length would be 
     exceeded.
 
+*   `prioritizeKeepingFunctionOutputTogether` _(boolean)_: Determines if 
+    function-like declaration outputs should be prioritized to be together with the
+    function signature right (closing) parenthesis. If false (the default), function 
+    output (i.e. throws, return type) is not prioritized to be together with the 
+    signature's right parenthesis, and when the line length would be exceeded,
+    a line break will be fired after the function signature first, indenting the 
+    declaration output one additional level. If true, A line break will be fired 
+    further up in the function's declaration (e.g. generic parameters, 
+    parameters) before breaking on the function's output.  
+
 *   `indentConditionalCompilationBlocks` _(boolean)_: Determines if
     conditional compilation blocks are indented. If this setting is `false` the body
     of `#if`, `#elseif`, and `#else` is not indented. Defaults to `true`.
