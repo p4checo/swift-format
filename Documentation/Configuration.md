@@ -58,6 +58,14 @@ top-level keys and values:
     argument, forcing the entire argument list to be laid out vertically.
     If false (the default), arguments will be laid out horizontally first, with
     line breaks only being fired when the line length would be exceeded.
+    
+*   `lineBreakAfterGenericWhereClause` _(boolean)_:  Determines the 
+    line-breaking behavior for generic where clauses when the requirements list 
+    is wrapped onto multiple lines. If false (the default),  requirements will be laid 
+    out horizontally first, with line breaks only  being fired when the line length 
+    would be exceeded, including the where clause. If true, a linebreak will be 
+    added before the first requirement and anytime the line length would be 
+    exceeded.
 
 *   `indentConditionalCompilationBlocks` _(boolean)_: Determines if
     conditional compilation blocks are indented. If this setting is `false` the body

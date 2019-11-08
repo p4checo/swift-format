@@ -30,6 +30,7 @@ public class Configuration: Codable {
     case blankLineAfterFunctionDeclarations
     case lineBreakBeforeControlFlowKeywords
     case lineBreakBeforeEachArgument
+    case lineBreakAfterGenericWhereClause
     case indentConditionalCompilationBlocks
     case rules
   }
@@ -92,6 +93,14 @@ public class Configuration: Codable {
   /// each argument, forcing the entire argument list to be laid out vertically.
   public var lineBreakBeforeEachArgument = false
 
+  /// Determines the line-breaking behavior for generic where clauses when the requirements list is
+  /// wrapped onto multiple lines.
+  ///
+  /// If false (the default), requirements will be laid out horizontally first, with line breaks only
+  /// being fired when the line length would be exceeded, including the where clause. If true, a line
+  /// break will be added before the first requirement and anytime the line length would be exceeded.
+  public var lineBreakAfterGenericWhereClause = false
+
   /// Determines the indentation behavior for `#if`, `#elseif`, and `#else`.
   public var indentConditionalCompilationBlocks = true
 
@@ -140,6 +149,8 @@ public class Configuration: Codable {
       ?? true
     self.lineBreakBeforeEachArgument
       = try container.decodeIfPresent(Bool.self, forKey: .lineBreakBeforeEachArgument) ?? true
+    self.lineBreakAfterGenericWhereClause
+      = try container.decodeIfPresent(Bool.self, forKey: .lineBreakAfterGenericWhereClause) ?? false
     self.indentConditionalCompilationBlocks
       = try container.decodeIfPresent(Bool.self, forKey: .indentConditionalCompilationBlocks) ?? true
     self.rules = try container.decodeIfPresent([String: Bool].self, forKey: .rules) ?? [:]
@@ -159,6 +170,7 @@ public class Configuration: Codable {
     try container.encode(
       lineBreakBeforeControlFlowKeywords, forKey: .lineBreakBeforeControlFlowKeywords)
     try container.encode(lineBreakBeforeEachArgument, forKey: .lineBreakBeforeEachArgument)
+    try container.encode(lineBreakAfterGenericWhereClause, forKey: .lineBreakAfterGenericWhereClause)
     try container.encode(indentConditionalCompilationBlocks, forKey: .indentConditionalCompilationBlocks)
     try container.encode(rules, forKey: .rules)
   }

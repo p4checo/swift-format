@@ -1553,6 +1553,12 @@ private final class TokenStreamCreator: SyntaxVisitor {
   func visit(_ node: GenericWhereClauseSyntax) -> SyntaxVisitorContinueKind {
     after(node.whereKeyword, tokens: .break(.open))
     after(node.lastToken, tokens: .break(.close, size: 0))
+
+    if config.lineBreakAfterGenericWhereClause {
+      before(node.requirementList.firstToken, tokens: .open)
+      after(node.requirementList.lastToken, tokens: .close)
+    }
+
     return .visitChildren
   }
 

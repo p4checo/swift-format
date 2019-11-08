@@ -126,7 +126,7 @@ public class ClassDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
   }
 
-  public func testClassInheritence() {
+  public func testClassInheritance() {
     let input =
       """
       class MyClass: SuperOne {
@@ -206,7 +206,51 @@ public class ClassDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 60)
   }
 
-  public func testClassWhereClauseWithInheritence() {
+  public func testClassWhereClauseWithLineBreak() {
+    let input =
+    """
+      class MyClass<S, T> where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      class MyClass<S, T> where S: Collection, T: ReallyLongClassName {
+        let A: Int
+        let B: Double
+      }
+      class MyClass<S, T> where S: Collection, T: ReallyLongClassName, U: LongerClassName, W: AnotherLongClassName {
+        let A: Int
+        let B: Double
+      }
+      """
+
+    let expected =
+    """
+      class MyClass<S, T> where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      class MyClass<S, T>
+      where S: Collection, T: ReallyLongClassName {
+        let A: Int
+        let B: Double
+      }
+      class MyClass<S, T>
+      where
+        S: Collection, T: ReallyLongClassName, U: LongerClassName,
+        W: AnotherLongClassName
+      {
+        let A: Int
+        let B: Double
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakAfterGenericWhereClause = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 60, configuration: config)
+  }
+
+  public func testClassWhereClauseWithInheritance() {
     let input =
       """
       class MyClass<S, T>: SuperOne where S: Collection {
@@ -234,6 +278,41 @@ public class ClassDeclTests: PrettyPrintTestCase {
       """
 
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 60)
+  }
+
+  public func testClassWhereClauseWithInheritanceAndLineBreak() {
+    let input =
+    """
+      class MyClass<S, T>: SuperOne where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      class MyClass<S, T>: SuperOne, SuperTwo where S: Collection, T: Protocol, T: ReallyLongClassName, U: LongerClassName {
+        let A: Int
+        let B: Double
+      }
+      """
+
+    let expected =
+    """
+      class MyClass<S, T>: SuperOne where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      class MyClass<S, T>: SuperOne, SuperTwo
+      where
+        S: Collection, T: Protocol, T: ReallyLongClassName,
+        U: LongerClassName
+      {
+        let A: Int
+        let B: Double
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakAfterGenericWhereClause = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 60, configuration: config)
   }
 
   public func testClassAttributes() {
@@ -313,6 +392,40 @@ public class ClassDeclTests: PrettyPrintTestCase {
 
     let config = Configuration()
     config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
+  }
+
+  public func testClassFullWrapWithLineBreakAfterWhereClause() {
+    let input =
+    """
+      public class MyContainer<BaseCollection, SecondCollection>: MyContainerSuperclass, MyContainerProtocol, SomeoneElsesContainerProtocol, SomeFrameworkContainerProtocol where BaseCollection: Collection, BaseCollection.Element: Equatable, BaseCollection.Element: SomeOtherProtocol {
+        let A: Int
+        let B: Double
+      }
+      """
+
+    let expected =
+
+    """
+      public class MyContainer<
+        BaseCollection, SecondCollection
+      >: MyContainerSuperclass, MyContainerProtocol,
+        SomeoneElsesContainerProtocol,
+        SomeFrameworkContainerProtocol
+      where
+        BaseCollection: Collection,
+        BaseCollection.Element: Equatable,
+        BaseCollection.Element: SomeOtherProtocol
+      {
+        let A: Int
+        let B: Double
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    config.lineBreakAfterGenericWhereClause = true
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 

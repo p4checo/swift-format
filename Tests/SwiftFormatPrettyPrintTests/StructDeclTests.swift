@@ -126,7 +126,7 @@ public class StructDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 30, configuration: config)
   }
 
-  public func testStructInheritence() {
+  public func testStructInheritance() {
     let input =
       """
       struct MyStruct: ProtoOne {
@@ -206,7 +206,51 @@ public class StructDeclTests: PrettyPrintTestCase {
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 60)
   }
 
-  public func testStructWhereClauseWithInheritence() {
+  public func testStructWhereClause_lineBreakAfterGenericWhere() {
+    let input =
+    """
+      struct MyStruct<S, T> where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      struct MyStruct<S, T> where S: Collection, T: ReallyLongStructName {
+        let A: Int
+        let B: Double
+      }
+      struct MyStruct<S, T> where S: Collection, T: ReallyLongStructName, U: AnotherLongStruct {
+        let A: Int
+        let B: Double
+      }
+      """
+
+    let expected =
+    """
+      struct MyStruct<S, T> where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      struct MyStruct<S, T>
+      where S: Collection, T: ReallyLongStructName {
+        let A: Int
+        let B: Double
+      }
+      struct MyStruct<S, T>
+      where
+        S: Collection, T: ReallyLongStructName,
+        U: AnotherLongStruct
+      {
+        let A: Int
+        let B: Double
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakAfterGenericWhereClause = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 60, configuration: config)
+  }
+
+  public func testStructWhereClauseWithInheritance() {
     let input =
       """
       struct MyStruct<S, T>: ProtoOne where S: Collection {
@@ -234,6 +278,41 @@ public class StructDeclTests: PrettyPrintTestCase {
       """
 
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 60)
+  }
+
+  public func testStructWhereClauseWithInheritance_lineBreakAfterGenericWhere() {
+    let input =
+    """
+      struct MyStruct<S, T>: ProtoOne where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      struct MyStruct<S, T>: ProtoOne, ProtoTwo where S: Collection, T: Protocol, T: ReallyLongProtocolName, U: LongerProtocolName {
+        let A: Int
+        let B: Double
+      }
+      """
+
+    let expected =
+    """
+      struct MyStruct<S, T>: ProtoOne where S: Collection {
+        let A: Int
+        let B: Double
+      }
+      struct MyStruct<S, T>: ProtoOne, ProtoTwo
+      where
+        S: Collection, T: Protocol, T: ReallyLongProtocolName,
+        U: LongerProtocolName
+      {
+        let A: Int
+        let B: Double
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakAfterGenericWhereClause = true
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 60, configuration: config)
   }
 
   public func testStructAttributes() {
@@ -313,6 +392,40 @@ public class StructDeclTests: PrettyPrintTestCase {
 
     let config = Configuration()
     config.lineBreakBeforeEachArgument = false
+    assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
+  }
+
+  public func testStructFullWrap_lineBreakAfterGenericWhere() {
+    let input =
+    """
+      public struct MyContainer<BaseCollection, SecondCollection>: MyContainerProtocolOne, MyContainerProtocolTwo, SomeoneElsesContainerProtocol, SomeFrameworkContainerProtocol where BaseCollection: Collection, BaseCollection.Element: Equatable, BaseCollection.Element: SomeOtherProtocol {
+        let A: Int
+        let B: Double
+      }
+      """
+
+    let expected =
+
+    """
+      public struct MyContainer<
+        BaseCollection, SecondCollection
+      >: MyContainerProtocolOne, MyContainerProtocolTwo,
+        SomeoneElsesContainerProtocol,
+        SomeFrameworkContainerProtocol
+      where
+        BaseCollection: Collection,
+        BaseCollection.Element: Equatable,
+        BaseCollection.Element: SomeOtherProtocol
+      {
+        let A: Int
+        let B: Double
+      }
+
+      """
+
+    let config = Configuration()
+    config.lineBreakBeforeEachArgument = false
+    config.lineBreakAfterGenericWhereClause = true
     assertPrettyPrintEqual(input: input, expected: expected, linelength: 50, configuration: config)
   }
 
